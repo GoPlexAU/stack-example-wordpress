@@ -66,7 +66,7 @@ define( 'NONCE_SALT',       getenv( 'NONCE_SALT' ) ?: 'put your unique phrase he
 $table_prefix = getenv('DB_PREFIX') ?: 'wp_';
 
 define( 'WP_HOME', rtrim( getenv( 'WP_HOME' ) ?: 'http://' . $_SERVER['HTTP_HOST'], '/' ) );
-define( 'WP_SITEURL', getenv( 'WP_SITEURL' ) ?: 'http://' . $_SERVER['HTTP_HOST'] . '/wp' );
+define( 'WP_SITEURL', getenv( 'WP_SITEURL' ) ?: 'http://' . $_SERVER['HTTP_HOST'] . '/' );
 
 /**
  * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
@@ -116,7 +116,7 @@ if ( ! defined( 'DISALLOW_FILE_MODS' ) ) {
 
 /** Absolute path to the WordPress directory. */
 if ( ! defined( 'ABSPATH' ) ) {
-	define( 'ABSPATH', dirname( __FILE__ ) . '/wp/' );
+	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
 }
 
 /** Sets up WordPress vars and included files. */
