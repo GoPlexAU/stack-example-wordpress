@@ -3,7 +3,7 @@
  * Common template tags
  *
  * @since 3.0.0
- * @version 4.0.0
+ * @version 7.0.0
  */
 
 // Exit if accessed directly.
@@ -446,6 +446,33 @@ function bp_nouveau_pagination( $position ) {
 			$bottom_hook = '';
 			$page_arg    = $GLOBALS['requests_template']->pag_arg;
 			break;
+
+		default:
+			/**
+			 * Use this filter to define your custom pagination parameters.
+			 *
+			 * @since 6.0.0
+			 *
+			 * @param array $value {
+			 *     An associative array of pagination parameters.
+			 *     @type string   $pag_count Information about the pagination count.
+			 *                               eg: "Viewing 1 - 10 of 20 items".
+			 *     @type string   $pag_links The Pagination links.
+			 *     @type string   $page_arg  The argument to use to pass the page number.
+			 * }
+			 * @param string $pagination_type Information about the pagination type.
+			 */
+			$pagination_params = apply_filters( 'bp_nouveau_pagination_params',
+				array(
+					'pag_count' => '',
+					'pag_links' => '',
+					'page_arg'  => '',
+				),
+				$pagination_type
+			);
+
+			list( $pag_count, $pag_links, $page_arg ) = array_values( $pagination_params );
+			break;
 	}
 
 	$count_class = sprintf( '%1$s-%2$s-count-%3$s', $pagination_type, $screen, $position );
@@ -654,6 +681,25 @@ function bp_dir_is_vert_layout() {
 	$component  = sanitize_key( bp_current_component() );
 
 	return (bool) $bp_nouveau->{$component}->directory_vertical_layout;
+}
+
+/**
+ * Template tag to wrap the Legacy actions that was used
+ * after the components directory page.
+ *
+ * @since 6.0.0
+ */
+function bp_nouveau_after_directory_page() {
+	$component = bp_current_component();
+
+	/**
+	 * Fires at the bottom of the activity, members, groups and blogs directory template file.
+	 *
+	 * @since 1.5.0 Added to the members, groups directory template file.
+	 * @since 2.3.0 Added to the blogs directory template file.
+	 * @since 6.0.0 Added to the activity directory template file.
+	 */
+	do_action( "bp_after_directory_{$component}_page" );
 }
 
 /**
@@ -1402,11 +1448,12 @@ function bp_nouveau_container_classes() {
 	 * Returns the main BuddyPress container classes.
 	 *
 	 * @since 3.0.0
+	 * @since 7.0.0 Add a class to inform about the active Theme.
 	 *
 	 * @return string CSS classes
 	 */
 	function bp_nouveau_get_container_classes() {
-		$classes           = array( 'buddypress-wrap' );
+		$classes           = array( 'buddypress-wrap', get_template() );
 		$component         = bp_current_component();
 		$bp_nouveau        = bp_nouveau();
 		$member_type_class = '';
@@ -1487,6 +1534,11 @@ function bp_nouveau_container_classes() {
 			} else {
 				$classes[] = 'bp-dir-hori-nav';
 			}
+		}
+
+		$global_alignment = bp_nouveau_get_temporary_setting( 'global_alignment', bp_nouveau_get_appearance_settings( 'global_alignment' ) );
+		if ( $global_alignment && 'alignnone' !== $global_alignment && current_theme_supports( 'align-wide' ) ) {
+			$classes[] = $global_alignment;
 		}
 
 		$class = array_map( 'sanitize_html_class', $classes );
@@ -1739,6 +1791,14 @@ function bp_nouveau_get_search_objects( $objects = array() ) {
 		$objects['secondary'] = bp_current_component();
 	} elseif ( 'group' === $primary ) {
 		$objects['secondary'] = bp_current_action();
+
+		if ( bp_is_group_home() && ! bp_is_group_custom_front() ) {
+			$objects['secondary'] = 'members';
+
+			if ( bp_is_active( 'activity' ) ) {
+				$objects['secondary'] = 'activity';
+			}
+		}
 	} else {
 
 		/**
@@ -1984,7 +2044,18 @@ function bp_nouveau_current_object() {
 		$component['data_filter']      = bp_current_action();
 
 		if ( 'activity' !== bp_current_action() ) {
-			$component['data_filter'] = 'group_' . bp_current_action();
+			/**
+			 * If the Group's front page is not used, Activities are displayed on Group's home page.
+			 * To make sure filters are behaving the right way, we need to override the component object
+			 * and data filter to `activity`.
+			 */
+			if ( bp_is_group_activity() ) {
+				$activity_id              = buddypress()->activity->id;
+				$component['object']      = $activity_id;
+				$component['data_filter'] = $activity_id;
+			} else {
+				$component['data_filter'] = 'group_' . bp_current_action();
+			}
 		}
 
 	} else {
@@ -2523,7 +2594,7 @@ function bp_nouveau_signup_privacy_policy_acceptance_section() {
  *
  * @param string $action The action to get the submit button for. Required.
  */
-function bp_nouveau_submit_button( $action ) {
+function bp_nouveau_submit_button( $action, $object_id = 0 ) {
 	$submit_data = bp_nouveau_get_submit_button( $action );
 	if ( empty( $submit_data['attributes'] ) || empty( $submit_data['nonce'] ) ) {
 		return;
@@ -2557,6 +2628,10 @@ function bp_nouveau_submit_button( $action ) {
 	if ( empty( $submit_data['nonce_key'] ) ) {
 		wp_nonce_field( $submit_data['nonce'] );
 	} else {
+		if ( $object_id ) {
+			$submit_data['nonce_key'] .= '_' . (int) $object_id;
+		}
+
 		wp_nonce_field( $submit_data['nonce'], $submit_data['nonce_key'] );
 	}
 

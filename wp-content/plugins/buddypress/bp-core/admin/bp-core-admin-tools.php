@@ -19,23 +19,29 @@ function bp_core_admin_tools() {
 	?>
 	<div class="wrap">
 
-		<h1><?php esc_html_e( 'BuddyPress Tools', 'buddypress' ) ?></h1>
+		<h1 class="wp-heading-inline"><?php esc_html_e( 'BuddyPress Tools', 'buddypress' ) ?></h1>
+		<hr class="wp-header-end">
 
-		<p><?php esc_html_e( 'BuddyPress keeps track of various relationships between members, groups, and activity items. Occasionally these relationships become out of sync, most often after an import, update, or migration.', 'buddypress' ); ?></p>
+		<p><?php esc_html_e( 'BuddyPress keeps track of various relationships between members, groups, and activity items.', 'buddypress' ); ?></p>
+		<p><?php esc_html_e( 'Occasionally these relationships become out of sync, most often after an import, update, or migration.', 'buddypress' ); ?></p>
 		<p><?php esc_html_e( 'Use the tools below to manually recalculate these relationships.', 'buddypress' ); ?>
 		</p>
-		<p class="description"><?php esc_html_e( 'Some of these tools create substantial database overhead. Avoid running more than one repair job at a time.', 'buddypress' ); ?></p>
+		<p class="attention"><?php esc_html_e( 'Some of these tools create substantial database overhead. Avoid running more than one repair job at a time.', 'buddypress' ); ?></p>
+
+		<h2><?php esc_html_e( 'Activate checkboxe(s) to select the operation(s) to perform', 'buddypress' ); ?></h2>
 
 		<form class="settings" method="post" action="">
 
 			<fieldset>
-				<legend><?php esc_html_e( 'Repair tools', 'buddypress' ) ?></legend>
+				<legend class="screen-reader-text"><?php esc_html_e( 'Repair tools', 'buddypress' ); ?></legend>
 
-				<div class="checkbox">
 				<?php foreach ( bp_admin_repair_list() as $item ) : ?>
-					<label for="<?php echo esc_attr( str_replace( '_', '-', $item[0] ) ); ?>"><input type="checkbox" class="checkbox" name="<?php echo esc_attr( $item[0] ) . '" id="' . esc_attr( str_replace( '_', '-', $item[0] ) ); ?>" value="1" /> <?php echo esc_html( $item[1] ); ?></label>
+					<p>
+						<label for="<?php echo esc_attr( str_replace( '_', '-', $item[0] ) ); ?>">
+							<input type="checkbox" class="checkbox" name="<?php echo esc_attr( $item[0] ) . '" id="' . esc_attr( str_replace( '_', '-', $item[0] ) ); ?>" value="1" /> <?php echo esc_html( $item[1] ); ?>
+						</label>
+					</p>
 				<?php endforeach; ?>
-				</div>
 
 				<p class="submit">
 					<input class="button-primary" type="submit" name="bp-tools-submit" value="<?php esc_attr_e( 'Repair Items', 'buddypress' ); ?>" />
@@ -137,6 +143,14 @@ function bp_admin_repair_list() {
 			__( 'Repopulate site tracking records.', 'buddypress' ),
 			'bp_admin_repair_blog_records',
 		);
+
+		if ( bp_is_active( 'blogs', 'site-icon' ) ) {
+			$repair_list[91] = array(
+				'bp-blog-site-icons',
+				__( 'Repair site tracking site icons/blog avatars synchronization.', 'buddypress' ),
+				'bp_admin_repair_blog_site_icons',
+			);
+		}
 	}
 
 	// Emails:
@@ -145,6 +159,14 @@ function bp_admin_repair_list() {
 		'bp-reinstall-emails',
 		__( 'Reinstall emails (delete and restore from defaults).', 'buddypress' ),
 		'bp_admin_reinstall_emails',
+	);
+
+	// Invitations:
+	// - maybe create the database table and migrate any existing group invitations.
+	$repair_list[110] = array(
+		'bp-invitations-table',
+		__( 'Create the database table for Invitations and migrate existing group invitations if needed.', 'buddypress' ),
+		'bp_admin_invitations_table',
 	);
 
 	ksort( $repair_list );
@@ -173,6 +195,7 @@ function bp_admin_repair_friend_count() {
 		return;
 	}
 
+	/* translators: %s: the result of the action performed by the repair tool */
 	$statement = __( 'Counting the number of friends for each user&hellip; %s', 'buddypress' );
 	$result    = __( 'Failed!', 'buddypress' );
 
@@ -231,6 +254,7 @@ function bp_admin_repair_group_count() {
 		return;
 	}
 
+	/* translators: %s: the result of the action performed by the repair tool */
 	$statement = __( 'Counting the number of groups for each user&hellip; %s', 'buddypress' );
 	$result    = __( 'Failed!', 'buddypress' );
 
@@ -273,7 +297,7 @@ function bp_admin_repair_group_count() {
  */
 function bp_admin_repair_blog_records() {
 
-	// Description of this tool, displayed to the user.
+	/* translators: %s: the result of the action performed by the repair tool */
 	$statement = __( 'Repopulating Blogs records&hellip; %s', 'buddypress' );
 
 	// Default to failure text.
@@ -297,11 +321,65 @@ function bp_admin_repair_blog_records() {
 }
 
 /**
+ * Repair site icons/blog avatars synchronization.
+ *
+ * @since 7.0.0
+ *
+ * @return array
+ */
+function bp_admin_repair_blog_site_icons() {
+
+	/* translators: %s: the result of the action performed by the repair tool */
+	$statement = __( 'Repairing site icons/blog avatars synchronization&hellip; %s', 'buddypress' );
+
+	// Run function if blogs component is active.
+	if ( bp_is_active( 'blogs', 'site-icon' ) ) {
+		$blog_ids = get_sites(
+			array(
+				'fields'   => 'ids',
+				'archived' => 0,
+				'mature'   => 0,
+				'spam'     => 0,
+				'deleted'  => 0,
+			)
+		);
+
+		$sizes = array(
+			array(
+				'key'  => 'site_icon_url_full',
+				'size' => bp_core_avatar_full_width(),
+			),
+			array(
+				'key'  => 'site_icon_url_thumb',
+				'size' => bp_core_avatar_thumb_width(),
+			),
+		);
+
+		foreach ( $blog_ids as $blog_id ) {
+			$site_icon = 0;
+
+			foreach ( $sizes as $size ) {
+				$site_icon = bp_blogs_get_site_icon_url( $blog_id, $size['size'] );
+				if ( ! $site_icon ) {
+					$site_icon = 0;
+				}
+
+				bp_blogs_update_blogmeta( $blog_id, $size['key'], $site_icon );
+			}
+		}
+	}
+
+	// All done!
+	return array( 0, sprintf( $statement, __( 'Complete!', 'buddypress' ) ) );
+}
+
+/**
  * Recalculate the total number of active site members.
  *
  * @since 2.0.0
  */
 function bp_admin_repair_count_members() {
+	/* translators: %s: the result of the action performed by the repair tool */
 	$statement = __( 'Counting the number of active members on the site&hellip; %s', 'buddypress' );
 	delete_transient( 'bp_active_member_count' );
 	bp_core_get_active_member_count();
@@ -316,9 +394,64 @@ function bp_admin_repair_count_members() {
  * @since 2.0.0
  */
 function bp_admin_repair_last_activity() {
+	/* translators: %s: the result of the action performed by the repair tool */
 	$statement = __( 'Determining last activity dates for each user&hellip; %s', 'buddypress' );
 	bp_last_activity_migrate();
 	return array( 0, sprintf( $statement, __( 'Complete!', 'buddypress' ) ) );
+}
+
+/**
+ * Create the invitations database table if it does not exist.
+ * Migrate outstanding group invitations if needed.
+ *
+ * @since 6.0.0
+ *
+ * @return array
+ */
+function bp_admin_invitations_table() {
+	global $wpdb;
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	require_once( buddypress()->plugin_dir . '/bp-core/admin/bp-core-admin-schema.php' );
+
+	/* translators: %s: the result of the action performed by the repair tool */
+	$statement = __( 'Creating the Invitations database table if it does not exist&hellip; %s', 'buddypress' );
+	$result    = __( 'Failed to create table!', 'buddypress' );
+
+	bp_core_install_invitations();
+
+	// Check for existence of invitations table.
+	$table_name = BP_Invitation_Manager::get_table_name();
+	$query = $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) );
+	if ( ! $wpdb->get_var( $query ) == $table_name ) {
+		// Early return if table creation failed.
+		return array( 2, sprintf( $statement, $result ) );
+	} else {
+		$result = __( 'Created invitations table!', 'buddypress' );
+	}
+
+	// Migrate group invitations if needed.
+	if ( bp_is_active( 'groups' ) ) {
+		$bp = buddypress();
+
+		/* translators: %s: the result of the action performed by the repair tool */
+		$migrate_statement = __( 'Migrating group invitations&hellip; %s', 'buddypress' );
+		$migrate_result    = __( 'Failed to migrate invitations!', 'buddypress' );
+
+		bp_groups_migrate_invitations();
+
+		// Check that there are no outstanding group invites in the group_members table.
+		$records = $wpdb->get_results( "SELECT id FROM {$bp->groups->table_name_members} WHERE is_confirmed = 0 AND is_banned = 0" );
+		if ( empty( $records ) ) {
+			$migrate_result = __( 'Migrated invitations!', 'buddypress' );
+			return array( 0, sprintf( $statement . ' ' . $migrate_statement , $result, $migrate_result ) );
+		} else {
+			return array( 2, sprintf( $statement . ' ' . $migrate_statement , $result, $migrate_result ) );
+		}
+	}
+
+	// Return a "create-only" success message.
+	return array( 0, sprintf( $statement, $result ) );
 }
 
 /**
@@ -355,7 +488,7 @@ function bp_admin_tools_feedback( $message, $class = false ) {
 		return false;
 	}
 
-	$message = '<div id="message" class="' . esc_attr( $class ) . '">' . $message . '</div>';
+	$message = '<div id="message" class="' . esc_attr( $class ) . ' notice is-dismissible">' . $message . '</div>';
 	$message = str_replace( "'", "\'", $message );
 	$lambda  = function() use ( $message ) { echo $message; };
 
@@ -375,7 +508,8 @@ function bp_admin_tools_feedback( $message, $class = false ) {
 function bp_core_admin_available_tools_page() {
 	?>
 	<div class="wrap">
-		<h1><?php esc_attr_e( 'Tools', 'buddypress' ) ?></h1>
+		<h1 class="wp-heading-inline"><?php esc_html_e( 'Tools', 'buddypress' ) ?></h1>
+		<hr class="wp-header-end">
 
 		<?php
 
@@ -407,7 +541,13 @@ function bp_core_admin_available_tools_intro() {
 		<h2><?php esc_html_e( 'BuddyPress Tools', 'buddypress' ) ?></h2>
 		<p>
 			<?php esc_html_e( 'BuddyPress keeps track of various relationships between users, groups, and activity items. Occasionally these relationships become out of sync, most often after an import, update, or migration.', 'buddypress' ); ?>
-			<?php printf( esc_html_x( 'Use the %s to repair these relationships.', 'buddypress tools intro', 'buddypress' ), '<a href="' . esc_url( $url ) . '">' . esc_html__( 'BuddyPress Tools', 'buddypress' ) . '</a>' ); ?>
+			<?php
+			printf(
+				/* translators: %s: the link to the BuddyPress repair tools */
+				esc_html_x( 'Use the %s to repair these relationships.', 'buddypress tools intro', 'buddypress' ),
+				'<a href="' . esc_url( $url ) . '">' . esc_html__( 'BuddyPress Tools', 'buddypress' ) . '</a>'
+			);
+			?>
 		</p>
 	</div>
 	<?php
@@ -553,7 +693,7 @@ function bp_core_admin_debug_information( $debug_info = array() ) {
 				),
 				'active_components' => array(
 					'label' => __( 'Active components', 'buddypress' ),
-					'value' => implode( wp_list_pluck( $active_components, 'title' ), ', ' ),
+					'value' => implode( ', ', wp_list_pluck( $active_components, 'title' ) ),
 				),
 				'template_pack' => array(
 					'label' => __( 'Active template pack', 'buddypress' ),
