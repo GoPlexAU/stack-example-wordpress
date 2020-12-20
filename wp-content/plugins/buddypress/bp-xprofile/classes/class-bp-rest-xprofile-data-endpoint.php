@@ -50,10 +50,12 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 				'args'   => array(
 					'field_id' => array(
 						'description' => __( 'The ID of the field the data is from.', 'buddypress' ),
+						'required'    => true,
 						'type'        => 'integer',
 					),
 					'user_id'  => array(
 						'description' => __( 'The ID of user the field data is from.', 'buddypress' ),
+						'required'    => true,
 						'type'        => 'integer',
 					),
 				),
@@ -68,14 +70,11 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => array(
 						'value' => array(
-							'description' => __( 'The list of values for the field data.', 'buddypress' ),
+							'description' => __( 'The value(s) for the field data.', 'buddypress' ),
+							'required'    => true,
 							'type'        => 'array',
 							'items'       => array(
 								'type' => 'string',
-							),
-							'arg_options' => array(
-								'validate_callback' => 'rest_validate_request_arg',
-								'sanitize_callback' => 'rest_sanitize_request_arg',
 							),
 						),
 					),
@@ -96,11 +95,11 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 	 * @since 5.0.0
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_REST_Response
 	 */
 	public function get_item( $request ) {
 		// Get Field data.
-		$field_data = $this->get_xprofile_field_data_object( $request['field_id'], $request['user_id'] );
+		$field_data = $this->get_xprofile_field_data_object( $request->get_param( 'field_id' ), $request->get_param( 'user_id' ) );
 
 		$retval = array(
 			$this->prepare_response_for_collection(
@@ -136,7 +135,7 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 		$retval = true;
 
 		// Check the field exists.
-		$field = $this->get_xprofile_field_object( $request['field_id'] );
+		$field = $this->get_xprofile_field_object( $request->get_param( 'field_id' ) );
 
 		if ( empty( $field->id ) ) {
 			$retval = new WP_Error(
@@ -149,7 +148,7 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 		}
 
 		// Check the requested user exists.
-		if ( true === $retval && ! bp_rest_get_user( $request['user_id'] ) ) {
+		if ( true === $retval && ! bp_rest_get_user( $request->get_param( 'user_id' ) ) ) {
 			$retval = new WP_Error(
 				'bp_rest_member_invalid_id',
 				__( 'Invalid member ID.', 'buddypress' ),
@@ -160,7 +159,7 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 		}
 
 		// Check the user can view this field value.
-		$hidden_user_fields = bp_xprofile_get_hidden_fields_for_user( $request['user_id'] );
+		$hidden_user_fields = bp_xprofile_get_hidden_fields_for_user( $request->get_param( 'user_id' ) );
 
 		if ( true === $retval && in_array( $field->id, $hidden_user_fields, true ) ) {
 			$retval = new WP_Error(
@@ -195,7 +194,7 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 		// Setting context.
 		$request->set_param( 'context', 'edit' );
 
-		$field = $this->get_xprofile_field_object( $request['field_id'] );
+		$field = $this->get_xprofile_field_object( $request->get_param( 'field_id' ) );
 
 		if ( empty( $field->id ) ) {
 			return new WP_Error(
@@ -207,15 +206,17 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 			);
 		}
 
-		$user  = bp_rest_get_user( $request['user_id'] );
-		$value = $request['value'];
+		$user  = bp_rest_get_user( $request->get_param( 'user_id' ) );
+		$value = $request->get_param( 'value' );
 
 		/**
 		 * For field types not supporting multiple values, join values in case
 		 * the submitted value was not an array.
 		 */
 		if ( ! $field->type_obj->supports_multiple_defaults ) {
-			$value = implode( ' ', $value );
+			$value = implode( ' ', (array) $value );
+		} else {
+			$value = preg_split( '/[,]+/', $value );
 		}
 
 		if ( ! xprofile_set_field_data( $field->id, $user->ID, $value ) ) {
@@ -283,7 +284,7 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 			);
 		}
 
-		$user = bp_rest_get_user( $request['user_id'] );
+		$user = bp_rest_get_user( $request->get_param( 'user_id' ) );
 
 		if ( true === $retval && ! $user instanceof WP_User ) {
 			$retval = new WP_Error(
@@ -328,7 +329,7 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 		// Setting context.
 		$request->set_param( 'context', 'edit' );
 
-		$field = $this->get_xprofile_field_object( $request['field_id'] );
+		$field = $this->get_xprofile_field_object( $request->get_param( 'field_id' ) );
 
 		if ( empty( $field->id ) ) {
 			return new WP_Error(
@@ -340,7 +341,7 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 			);
 		}
 
-		$user = bp_rest_get_user( $request['user_id'] );
+		$user = bp_rest_get_user( $request->get_param( 'user_id' ) );
 
 		// Get the field data before it's deleted.
 		$field_data = $this->get_xprofile_field_data_object( $field->id, $user->ID );
@@ -349,7 +350,7 @@ class BP_REST_XProfile_Data_Endpoint extends WP_REST_Controller {
 		$field_data->value = '';
 		$previous          = $this->prepare_item_for_response( $field_data, $request );
 
-		if ( ! $field_data->delete() ) {
+		if ( false === $field_data->delete() ) {
 			return new WP_Error(
 				'bp_rest_xprofile_data_cannot_delete',
 				__( 'Could not delete XProfile data.', 'buddypress' ),
