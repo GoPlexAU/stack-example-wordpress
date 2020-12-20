@@ -138,6 +138,27 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 			if ( is_singular( 'llms_assignment' ) ) {
 				remove_action( 'astra_entry_after', 'astra_single_post_navigation_markup' );
 			}
+			$lifter_certificate_post_type = get_post_type();
+			if ( 'llms_certificate' === $lifter_certificate_post_type || 'llms_my_certificate' === $lifter_certificate_post_type ) {
+				if ( ! is_admin() ) {
+					add_filter( 'post_class', 'astra_certificate_class' );
+
+					/**
+					 * Remove ast-article-single class in case of content-boxed and boxed layout.
+					 *
+					 * @since 2.3.3
+					 * @param array $array is a array of classes.
+					 * @return array
+					 */
+					function astra_certificate_class( $array ) {
+						$delete_class = array_search( 'ast-article-single', $array );
+						if ( false !== $delete_class ) {
+							unset( $array[ $delete_class ] );
+						}
+						return $array;
+					}
+				}
+			}
 
 			remove_action( 'lifterlms_single_course_after_summary', 'lifterlms_template_single_reviews', 100 );
 			add_action( 'lifterlms_single_course_after_summary', array( $this, 'single_reviews' ), 100 );
@@ -153,6 +174,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 		 */
 		public function customize_register( $wp_customize ) {
 
+			// @codingStandardsIgnoreStart WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 			/**
 			 * Register Sections & Panels
 			 */
@@ -164,6 +186,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/class-astra-lifter-container-configs.php';
 			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/class-astra-lifter-sidebar-configs.php';
 			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/layout/class-astra-lifter-general-configs.php';
+			// @codingStandardsIgnoreEnd WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
 		}
 
 		/**
@@ -216,7 +239,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 				<h3><?php echo apply_filters( 'lifterlms_reviews_section_title', _e( 'What Others Have Said', 'astra' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></h3>
 				<?php
 				$args        = array(
-					'posts_per_page'   => get_post_meta( get_the_ID(), '_llms_num_reviews', true ),
+					'posts_per_page'   => get_post_meta( get_the_ID(), '_llms_num_reviews', true ), // phpcs:ignore WPThemeReview.CoreFunctionality.PostsPerPage.posts_per_page_posts_per_page, WordPress.WP.PostsPerPage.posts_per_page_posts_per_page
 					'post_type'        => 'llms_review',
 					'post_status'      => 'publish',
 					'post_parent'      => get_the_ID(),
@@ -448,7 +471,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 				),
 			);
 
-			$css_output .= astra_parse_css( $css_global_button_tablet, '', '768' );
+			$css_output .= astra_parse_css( $css_global_button_tablet, '', astra_get_tablet_breakpoint() );
 
 			/**
 			 * Global button CSS - Mobile.
@@ -462,7 +485,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 				),
 			);
 
-			$css_output .= astra_parse_css( $css_global_button_mobile, '', '544' );
+			$css_output .= astra_parse_css( $css_global_button_mobile, '', astra_get_mobile_breakpoint() );
 
 			wp_add_inline_style( 'lifterlms-styles', apply_filters( 'astra_theme_lifterlms_dynamic_css', $css_output ) );
 

@@ -3,17 +3,17 @@ Contributors: brainstormforce
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: custom-menu, custom-logo, entertainment, featured-images, full-width-template, one-column, two-columns, left-sidebar, e-commerce, right-sidebar, custom-colors, editor-style, featured-images, full-width-template, microformats, post-formats, rtl-language-support, theme-options, threaded-comments, translation-ready, blog
-Tested up to: 5.3.2
+Tested up to: 5.6
 Requires PHP: 5.3
-Stable tag: 2.3.0
+Stable tag: 2.6.2
 
 Astra is fast, fully customizable & beautiful WordPress theme suitable for blog, personal portfolio, business website and WooCommerce storefront.
 
 == Description ==
 
-Astra is fast, fully customizable & beautiful WordPress theme suitable for blog, personal portfolio, business website and WooCommerce storefront. It is very lightweight (less than 50KB on frontend) and offers unparalleled speed. Built with SEO in mind, Astra comes with Schema.org code integrated and is Native AMP ready so search engines will love your site. 
+Astra is fast, fully customizable & beautiful WordPress theme suitable for blog, personal portfolio, business website and WooCommerce storefront. It is very lightweight (less than 50KB on frontend) and offers unparalleled speed. Built with SEO in mind, Astra comes with Schema.org code integrated and is Native AMP ready so search engines will love your site.
 
-It offers special features and templates so it works perfectly with all page builders like Elementor, Beaver Builder, Visual Composer, SiteOrigin, Divi, etc. Some of the other features: # WooCommerce Ready # Responsive # RTL & Translation Ready # Extendible with premium addons # Regularly updated # Designed, Developed, Maintained & Supported by Brainstorm Force. 
+It offers special features and templates so it works perfectly with all page builders like Elementor, Beaver Builder, Visual Composer, SiteOrigin, Divi, etc. Some of the other features: # WooCommerce Ready # Responsive # RTL & Translation Ready # Extendible with premium addons # Regularly updated # Designed, Developed, Maintained & Supported by Brainstorm Force.
 
 Looking for a perfect base theme? Look no further. Astra is fast, fully customizable and WooCommerce ready theme that you can use for building any kind of website!
 
@@ -51,16 +51,17 @@ Astra has up to 4 widget area. 1 in your header, 1 for each sidebar and up to 2 
 There are multiple ways you can use a child theme with the Astra Theme, Use any one method mentoned below to create a child theme or use a child theme we have created.
 
 1. Download the child theme from Github - https://github.com/brainstormforce/astra-child/releases/latest/
-2. Using Plugin One click Child theme - https://wordpress.org/plugins/one-click-child-theme/
-3. More information on creating child theme. - https://codex.wordpress.org/Child_Themes
+2. More information on creating child theme. - https://developer.wordpress.org/themes/advanced-topics/child-themes/
 
 
 = Screenshot Licenses =
 
-All vectors published on unDraw can be used for free (https://undraw.co/license)
-https://undraw.co/illustrations
-Font Awesome Svg are all licensed under CC BY 4.0 (https://fontawesome.com/license/free)
-https://fontawesome.com/icons
+Screenshot images are all licensed under Creative Commons Zero (CC0) ( https://pxhere.com/en/license )
+https://pxhere.com/en/photo/100653
+https://pxhere.com/en/photo/759723
+https://pxhere.com/en/photo/1259448
+https://pxhere.com/en/photo/1456591
+https://pxhere.com/en/photo/1389199
 
 
 = Normalizing styles =
@@ -68,18 +69,21 @@ https://fontawesome.com/icons
 Normalizing styles have been helped along thanks to the fine work of.
 Nicolas Gallagher and Jonathan Neal https://necolas.github.com/normalize.css/
 
-= Flexibility JS = 
+= Flexibility JS =
 
 Flexibility is a JavaScript polyfill for Flexbox By Jonathan Neal, 10up. (https://github.com/jonathantneal/flexibility)
 Licensed under MIT ( https://github.com/jonathantneal/flexibility/blob/master/LICENSE.md )
 
-= WP Color Picker Alpha =
-
-WP Color Picker Alpha is used to Overwrite Automattic Iris for enabled Alpha Channel in wpColorPicker By Sergio. (https://github.com/kallookoo/wp-color-picker-alpha)
-Distributed under the terms of the GNU GPL v2.
-
-= IcoMoon-Free = 
+= IcoMoon-Free =
 
 Astra icon font is based on IcoMoon-Free vector icon by Keyamoon.
 IcoMoon-Free vector icon destributed under trems of CC BY 4.0 or GPL. (https://creativecommons.org/licenses/by/4.0/ or https://www.gnu.org/licenses/gpl.html)
 Source: https://keyamoon.com/
+
+= Breadcrumb Trail =
+
+Astra default breadcrumb is based on Breadcrumb Trail by Justin Tadlock. (https://github.com/justintadlock/breadcrumb-trail)
+Breadcrumb Trail is distributed under the terms of the GNU GPL v2 or later.
+
+Underscores
+https://underscores.me/, (C) 2012-2020 Automattic, Inc., [GPLv2 or later](https://www.gnu.org/licenses/gpl-2.0.html)
