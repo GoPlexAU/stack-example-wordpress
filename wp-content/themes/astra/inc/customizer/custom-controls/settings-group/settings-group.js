@@ -6,6 +6,12 @@
     jQuery( document ).ready(function() {
         var last_scroll_top = 0;
         var parentSection   = jQuery( '.wp-full-overlay-sidebar-content' );
+        var browser = navigator.userAgent.toLowerCase();
+        if ( ! ( browser.indexOf( 'firefox' ) > -1 ) ) {
+        var parent_width_remove = 6;
+        } else {
+        var parent_width_remove = 16;
+        }
         jQuery('#customize-controls .wp-full-overlay-sidebar-content .control-section').on( 'scroll', function (event) {
             var $this = jQuery(this);
             // Run sticky js for only open section.
@@ -19,8 +25,10 @@
                 } else {
                     // On scroll up, add sticky section title.
                     var parent_width = $this.outerWidth();
-                    section_title.addClass( 'maybe-sticky' ).addClass( 'is-in-view' ).addClass( 'is-sticky' ).width( parent_width - 6 ).css( 'top', parentSection.css( 'top' ) );
-                    $this.css( 'padding-top', section_title.height() );
+                    section_title.addClass( 'maybe-sticky' ).addClass( 'is-in-view' ).addClass( 'is-sticky' ).width( parent_width - parent_width_remove ).css( 'top', parentSection.css( 'top' ) );
+                    if ( ! ( browser.indexOf( 'firefox' ) > -1 ) ) {
+                        $this.css( 'padding-top', section_title.height() );
+                    }
                     if( scroll_top === 0 ) {
                         // Remove sticky section heading when scrolled to the top.
                         section_title.removeClass( 'maybe-sticky' ).removeClass( 'is-in-view' ).removeClass( 'is-sticky' );
@@ -132,15 +140,24 @@
                 fields_html += '<div id="' + clean_param_name + '-tabs" class="ast-group-tabs">'; 
                 fields_html += '<ul class="ast-group-list">'; 
                 var counter = 0;
+                var tabs_counter = 0;
 
                 _.each( fields.tabs, function ( value, key ) {
-
                     var li_class = '';
-                    if( 0 == counter ) {
-                        li_class = "active";
+
+                    switch(counter) {
+                        case 0:
+                            li_class = 'active';
+                            tab_key = 'normal';
+                          break;
+                        case 1:
+                            tab_key = 'hover';
+                          break;
+                        default:
+                            tab_key = 'active';
                     }
 
-                    fields_html += '<li class="'+ li_class + '"><a href="#tab-' + key + '"><span>' + key +  '</span></a></li>';
+                    fields_html += '<li class="'+ li_class + '"><a href="#tab-' + tab_key + '"><span>' + key +  '</span></a></li>';
                     counter++;
                 });
 
@@ -149,8 +166,19 @@
                 fields_html += '<div class="ast-tab-content" >';
 
                 _.each( fields.tabs, function ( fields_data, key ) {
+                    switch(tabs_counter) {
+                        case 0:
+                            li_class = 'active';
+                            tab_key = 'normal';
+                          break;
+                        case 1:
+                            tab_key = 'hover';
+                          break;
+                        default:
+                            tab_key = 'active';
+                    }
 
-                    fields_html += '<div id="tab-'+ key +'" class="tab">';
+                    fields_html += '<div id="tab-'+ tab_key +'" class="tab">';
 
                     var result = control.generateFieldHtml( fields_data, field_values );
 
@@ -165,6 +193,7 @@
                     });
 
                     fields_html += '</div>';
+                    tabs_counter++;
                 });
 
                 fields_html += '</div></div>';

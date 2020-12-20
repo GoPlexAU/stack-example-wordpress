@@ -65,7 +65,9 @@ if ( ! class_exists( 'Astra_Site_Container_Layout_Configs' ) ) {
 						'page-builder'            => __( 'Full Width / Stretched', 'astra' ),
 					),
 				),
-
+				/**
+				 * Option: Single Page Content Layout
+				 */
 				array(
 					'name'     => ASTRA_THEME_SETTINGS . '[single-page-content-layout]',
 					'type'     => 'control',
@@ -124,15 +126,15 @@ if ( ! class_exists( 'Astra_Site_Container_Layout_Configs' ) ) {
 				 * Option: Body Background
 				 */
 				array(
-					'name'     => ASTRA_THEME_SETTINGS . '[site-layout-outside-bg-obj]',
-					'type'     => 'control',
-					'control'  => 'ast-background',
-					'default'  => astra_get_option( 'site-layout-outside-bg-obj' ),
-					'section'  => 'section-colors-body',
-					'priority' => 25,
-					'title'    => __( 'Background', 'astra' ),
+					'name'      => ASTRA_THEME_SETTINGS . '[site-layout-outside-bg-obj-responsive]',
+					'type'      => 'control',
+					'control'   => 'ast-responsive-background',
+					'default'   => astra_get_option( 'site-layout-outside-bg-obj-responsive' ),
+					'section'   => 'section-colors-body',
+					'transport' => 'postMessage',
+					'priority'  => 25,
+					'title'     => __( 'Background', 'astra' ),
 				),
-
 			);
 
 			$configurations = array_merge( $configurations, $_configs );
@@ -163,7 +165,7 @@ if ( ! class_exists( 'Astra_Site_Container_Layout_Configs' ) ) {
 						'section'  => 'section-container-layout',
 						'priority' => 999,
 						'title'    => '',
-						'help'     => '<p>' . __( 'More Options Available in Astra Pro!', 'astra' ) . '</p><a href="' . astra_get_pro_url( 'https://wpastra.com/pro/', 'customizer', 'learn-more', 'upgrade-to-pro' ) . '" class="button button-primary"  target="_blank" rel="noopener">' . __( 'Learn More', 'astra' ) . '</a>',
+						'help'     => '<p>' . __( 'More Options Available in Astra Pro!', 'astra' ) . '</p><a href="' . astra_get_pro_url( 'https://wpastra.com/pro/', 'customizer', 'learn-more', 'upgrade-to-pro' ) . '" class="button button-secondary"  target="_blank" rel="noopener">' . __( 'Learn More', 'astra' ) . '</a>',
 						'settings' => array(),
 					),
 				);
