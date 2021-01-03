@@ -1,0 +1,231 @@
+/* Main column width */
+.wp-block {
+    max-width: 770px;
+}
+
+/* Width of "wide" blocks */
+.wp-block[data-align="wide"] {
+    max-width: 1080px;
+}
+
+/* Width of "full-wide" blocks */
+.wp-block[data-align="full"] {
+    max-width: none;
+}
+
+/** === Base Typography === */
+
+html{
+  font-size:14px;
+}
+
+body {
+  font-family: poppins,sans-serif;
+  font-size: 1.2857rem;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.666;
+  color: #666;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: poppins, sans-serif;
+  font-weight: 600;
+  color: #000;
+}
+
+h1{
+  font-size: 3.428rem;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+  margin: .5em 0;
+}
+
+h2{
+    font-size: 2.571rem;
+    line-height: 1.166;
+    letter-spacing: 0;
+    margin: 2.6rem 0;
+}
+
+h3{
+    font-size: 2.142rem;
+    line-height: 1.2;
+    letter-spacing: -.05em;
+    margin: 2.6rem 0;
+}
+
+h4{
+    font-size: 1.714rem;
+    line-height: 1.25;
+    letter-spacing: .025em;
+    margin: 2.6rem 0;
+}
+
+h5{
+    font-size: 1.571rem;
+    line-height: 1.1;
+    letter-spacing: 0;
+    margin: 2.6rem 0;;
+}
+
+h6{
+    font-size: 1.285rem;
+    line-height: 1.3333;
+    letter-spacing: 0;
+    margin: 2.6rem 0;
+}
+
+a {
+    color: #cee002;
+    text-decoration:none;
+	transition: color .3s ease-out;
+}
+
+code, kbd, pre, samp {
+    font-family: Menlo,Monaco,Consolas,courier new,monospace;
+}
+
+pre{
+	display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+p, blockquote {
+    margin-bottom: 2.6rem;
+}
+
+p{
+	font-size: 1.2857rem;
+}
+
+/** === Blockquote === */
+blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.714rem;
+    letter-spacing: 0.025em;
+    line-height: 1.5;
+    padding: 0;
+    width: 80%;
+    padding-left: 4.8rem;
+    border-left: 0.3rem solid #cee002;
+    margin-top: 5rem;
+    color: #000;
+}
+
+blockquote p{
+	font-size: 1.714rem;
+}
+
+.wp-block-quote cite, .wp-block-quote footer, .wp-block-quote__citation,
+.wp-block-quote.is-large cite, .wp-block-quote.is-large footer, .wp-block-quote.is-style-large cite, .wp-block-quote.is-style-large footer{
+	text-align:right;
+	font-size:1.2rem;;
+}
+.wp-block-pullquote.alignleft p, .wp-block-pullquote.alignright p {
+    font-size: 1.5rem;
+}
+
+.editor-post-title__block .editor-post-title__input {
+	font-family: poppins,sans-serif;
+    margin: 0 0 2.5rem;
+    letter-spacing: -.05em;
+    line-height: 1.125;
+    font-size: 3.428rem;
+    font-weight: 600;
+}
+
+.editor-styles-wrapper{
+	font-size:1.2857rem;
+}
+
+/** === Pullquote === */
+.wp-block-pullquote {
+  border-color: transparent;
+  border-width: 2px;
+  color: #000;
+}
+
+.wp-block-pullquote.is-style-solid-color blockquote {
+  width: calc(100% - (2 * 1rem));
+  max-width: calc( 100% - (2 * 1rem));
+}
+
+
+/** === Separator === */
+.wp-block-separator:not(.is-style-dots) {
+  border-bottom: 2px solid #767676;
+}
+
+.wp-block-separator:not(.is-style-wide):not(.is-style-dots) {
+  width: 2.25em;
+  margin-left: 0;
+}
+
+.wp-block-separator.is-style-dots:before {
+  color: #767676;
+  font-size: 1.6875em;
+  letter-spacing: calc(2 * 1rem);
+  padding-left: calc(2 * 1rem);
+}
+
+/* Remove duplicate rule-line when a separator
+ * is followed by an H1, or H2 */
+.wp-block[data-type="core/separator"] + .wp-block[data-type="core/heading"] h1:before,
+.wp-block[data-type="core/separator"] + .wp-block[data-type="core/heading"] h2:before {
+  display: none;
+}
+
+/** === Latest Posts, Archives, Categories === */
+ul.wp-block-archives,
+.wp-block-categories,
+.wp-block-latest-posts {
+  padding: 0;
+  list-style-type: none;
+}
+
+ul.wp-block-archives ul,
+.wp-block-categories ul,
+.wp-block-latest-posts ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.wp-block-latest-posts li,
+.wp-block-categories li,
+.wp-block-archives li{
+	margin-top:0.5em;
+	color:#b3b3b3;
+}
+
+
+.wp-block-latest-posts li a,
+.wp-block-categories li a,
+.wp-block-archives li a{
+	color:#666666;
+}
+
+.wp-block-latest-posts li a:hover,
+.wp-block-categories li a:hover,
+.wp-block-archives li a:hover{
+	color:#cee002;
+	text-decoration:none;
+}
+
+.wp-block-embed__wrapper iframe{
+	max-width:100%;
+}
