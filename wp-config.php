@@ -63,7 +63,7 @@ define( 'NONCE_SALT',       getenv( 'NONCE_SALT' ) ?: 'put your unique phrase he
  * You can have multiple installations in one database if you give each
  * a unique prefix. Only numbers, letters, and underscores please!
  */
-$table_prefix = getenv('DB_PREFIX') ?: 'wp_';
+$table_prefix = getenv('DB_PREFIX') ?: 'wpwk_';
 
 define( 'WP_HOME', rtrim( getenv( 'WP_HOME' ) ?: 'http://' . $_SERVER['HTTP_HOST'], '/' ) );
 define( 'WP_SITEURL', getenv( 'WP_SITEURL' ) ?: 'http://' . $_SERVER['HTTP_HOST'] . '/wp' );
