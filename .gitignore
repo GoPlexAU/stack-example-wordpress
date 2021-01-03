@@ -66,3 +66,5 @@ wp-includes/
 /wp-signup.php
 /wp-trackback.php
 /xmlrpc.php
+wp-content/.DS_Store
+.DS_Store
